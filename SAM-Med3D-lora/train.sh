@@ -1,0 +1,11 @@
+python train_lora.py \
+  --task_name hippocampus_train \
+  --checkpoint "ckpt/sam_med3d_turbo.pth" \
+  --device cuda \
+  --gpu_ids 0 \
+  --img_size 128 \
+  --batch_size 1 \
+  --num_workers 1 \
+  --num_epochs 100 \
+  --click_type random\
+  --multi_click
