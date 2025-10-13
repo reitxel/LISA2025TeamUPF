@@ -11,6 +11,7 @@ import logging
 import torch
 import tempfile
 
+
 def clear_cache_and_tmp():
     print("Clearing PyTorch CUDA cache...")
     torch.cuda.empty_cache()
@@ -30,8 +31,10 @@ def clear_cache_and_tmp():
             except Exception:
                 pass
 
+
 logging.basicConfig(level=logging.DEBUG)
 print("Starting inference container...")  # add this to confirm container start
+
 
 def prepare_input_folder(original_input: Path):
     """
@@ -43,11 +46,12 @@ def prepare_input_folder(original_input: Path):
 
     # Copy and rename input files into imagesTs
     for f in original_input.glob("*.nii.gz"):
-        old_name = f.name           
-        new_name = old_name.replace("ciso", "0000") 
+        old_name = f.name
+        new_name = old_name.replace("ciso", "0000")
         shutil.copy(f, imagesTs / new_name)
 
     return imagesTs
+
 
 # Clean non-NIfTI files and rename NIfTI files to desired pattern
 def clean_and_rename_outputs(output_dir: Path):
@@ -56,13 +60,13 @@ def clean_and_rename_outputs(output_dir: Path):
     """
     for f in output_dir.iterdir():
         if f.is_file():
-            if not f.name.endswith('.nii.gz'):
+            if not f.name.endswith(".nii.gz"):
                 f.unlink()
             else:
-                stem = f.stem 
+                stem = f.stem
                 parts = stem.split("_")
-                if len(parts) >= 3: 
-                    patient_num = parts[2]  
+                if len(parts) >= 3:
+                    patient_num = parts[2]
                     new_name = f"LISA_TESTING_SEG_{patient_num}_hipp.nii.gz"
                     f.rename(output_dir / new_name)
 
@@ -75,7 +79,7 @@ def predict(
     trainer: str = "nnUNetTrainer",
     config: str = "3d_fullres",
     plan: str = "nnUNetResEncUNetLPlans",
-    save_probabilities: bool = False
+    save_probabilities: bool = False,
 ):
     """
     Run nnUNetv2_predict one image at a time to avoid GPU OOM.
@@ -94,13 +98,20 @@ def predict(
 
             cmd = [
                 "nnUNetv2_predict",
-                "-d", dataset_id,
-                "-i", str(tmp_input_dir),
-                "-o", str(tmp_output_dir),
-                "-f", *folds.split(),
-                "-tr", trainer,
-                "-c", config,
-                "-p", plan
+                "-d",
+                dataset_id,
+                "-i",
+                str(tmp_input_dir),
+                "-o",
+                str(tmp_output_dir),
+                "-f",
+                *folds.split(),
+                "-tr",
+                trainer,
+                "-c",
+                config,
+                "-p",
+                plan,
             ]
             if save_probabilities:
                 cmd.append("--save_probabilities")
@@ -123,7 +134,7 @@ def main(
     """
     Run inference using data in input_dir and output predictions to output_dir.
     """
-    
+
     clear_cache_and_tmp()
 
     input_path = Path(input_dir)
@@ -134,11 +145,11 @@ def main(
     os.environ["nnUNet_raw"] = "./nnUNet/nnunetv2/nnUNet_raw"
     os.environ["nnUNet_preprocessed"] = "./nnUNet/nnunetv2/nnUNet_preprocessed"
     os.environ["nnUNet_results"] = "./nnUNet/nnunetv2/nnUNet_results"
-    
+
     imagesTs = prepare_input_folder(Path(input_dir))
 
     predict(imagesTs, Path(output_dir))
-    
+
     clean_and_rename_outputs(Path(output_dir))
 
 
