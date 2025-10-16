@@ -39,7 +39,8 @@ This study addresses two critical challenges in uLF MRI: **automated quality ass
 - **Segmentation (Tasks 2a & 2b):**  
   We benchmark a **task-specific model ([nnU-Net](https://github.com/MIC-DKFZ/nnUNet))** trained from scratch against a **foundation model (SAM-Med3D)** fine-tuned for uLF data.  
   nnU-Net achieved **mean Dice scores of 0.72** for hippocampi and **0.86** for basal ganglia. Lightweight fine-tuning of SAM-Med3D reached a comparable **0.70 Dice** for hippocampi, demonstrating the potential of **foundation models** for medical imaging under domain shift.
-  The  framework
+
+  Model weights available upon request.
 
 These results underscore the promise of combining robust segmentation frameworks with foundation models for **low-field MRI** in **resource-limited environments**.
 
