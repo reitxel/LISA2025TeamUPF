@@ -16,7 +16,7 @@ The overarching goal is to advance **reliable and open deep learning pipelines**
 
 ---
 
-## 🧩 Our Approach
+## Our Approach
 
 We participated in all competition tasks:
 
